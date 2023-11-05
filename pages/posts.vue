@@ -17,12 +17,14 @@
 
 <script setup>
 definePageMeta({
-    middleware: 'auth'
+  middleware: 'auth'
 })
+const { public: { apiBase } } = useRuntimeConfig()
+const headers = useRequestHeaders(['cookie'])
 
-const headers = useRequestHeaders(['cookie']);
-const { data: posts, error } = await useFetch('/api/posts', {
-    headers
+const { data: posts, error } = await useFetch(`${apiBase}/api/posts`, {
+  credentials: 'include',
+  headers: { ...headers, 'Accept': 'application/json', 'Referer': 'http://localhost:3000' }
 })
 // console.log(posts.value, error);
 
