@@ -42,18 +42,25 @@
 <script setup>
 import {useToast} from "vue-toastification";
 
-const toast = useToast()
+const toast = useToast();
 const {authUser} = useAuth();
-async function logout() {
-const headers = useRequestHeaders(['cookie']);
+const {public: {apiBase}} = useRuntimeConfig()
 
-  await useFetch('/api/auth/logout', {
+async function logout() {
+  const xsrfToken = useCookie('XSRF-TOKEN');
+  // const headers = useRequestHeaders(['cookie']);
+  // console.log(headers);
+  await useFetch(`${apiBase}/logout`, {
     method: 'POST',
-    headers
-  })
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'X-XSRF-TOKEN': xsrfToken.value
+    }
+  });
 
   authUser.value = null;
-  toast.warning("You are logouted!")
+  toast.warning("You are logouted!");
   return navigateTo('/')
 }
 </script>
