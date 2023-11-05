@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig:{
     public:{
-      apiBase: 'http://laravel9-project-api-auth-posts.test/api'
+      apiBase: 'http://laravel9-project-api-auth-posts.test'
     }
   },
   css: ['~/assets/css/main.css'],

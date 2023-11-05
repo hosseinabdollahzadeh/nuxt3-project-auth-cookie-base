@@ -51,18 +51,32 @@ const formData = reactive({
 });
 const toast = useToast();
 const { authUser } = useAuth();
+const { public: { apiBase } } = useRuntimeConfig()
+
 async function register() {
+  await $fetch(`${apiBase}/sanctum/csrf-cookie`, {
+    credentials: 'include',
+  })
+
+  const xsrfToken = useCookie('XSRF-TOKEN');
+
   try {
     loading.value = true;
-    const user = await $fetch('/api/auth/register', {
+    const data = await $fetch(`${apiBase}/register`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'X-XSRF-TOKEN': xsrfToken.value
+      }
     })
-    authUser.value = user;
+
+    authUser.value = data.user;
     toast.success("You are registered!");
     return navigateTo('/')
   } catch (error) {
-    errors.value = Object.values(error.data.data).flat()
+    errors.value = Object.values(error.data).flat();
   } finally {
     loading.value = false;
   }
